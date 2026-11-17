@@ -1,0 +1,253 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  background-color: #F8FAFC;
+  color: #000000;
+  font-family: 'Rethink Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Custom Light Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Canvas Grid Pattern (Light Theme) */
+.canvas-grid-pattern {
+  background-image: radial-gradient(#CBD5E1 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+.canvas-grid-pattern-dense {
+  background-image: radial-gradient(#CBD5E1 1.2px, transparent 1.2px);
+  background-size: 10px 10px;
+}
+
+/* Prism Code Highlighting Styles (High Contrast & Visible) */
+.lf-code-dark {
+  background-color: #0d1117 !important;
+  color: #e6edf3 !important;
+}
+
+.lf-code-dark code,
+.lf-code-dark pre {
+  background-color: transparent !important;
+  color: #e6edf3 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
+
+.lf-code-dark .token.comment,
+.lf-code-dark .token.prolog,
+.lf-code-dark .token.cdata {
+  color: #8b949e !important;
+  font-style: italic !important;
+}
+
+.lf-code-dark .token.doctype {
+  color: #ff7b72 !important;
+}
+
+.lf-code-dark .token.punctuation {
+  color: #8b949e !important;
+}
+
+.lf-code-dark .token.tag,
+.lf-code-dark .token.boolean,
+.lf-code-dark .token.symbol {
+  color: #7ee787 !important;
+}
+
+.lf-code-dark .token.attr-name,
+.lf-code-dark .token.property {
+  color: #79c0ff !important;
+}
+
+.lf-code-dark .token.attr-value,
+.lf-code-dark .token.string,
+.lf-code-dark .token.char,
+.lf-code-dark .token.builtin {
+  color: #a5d6ff !important;
+}
+
+.lf-code-dark .token.selector {
+  color: #d2a8ff !important;
+}
+
+.lf-code-dark .token.number {
+  color: #ffa657 !important;
+}
+
+.lf-code-dark .token.operator,
+.lf-code-dark .token.entity,
+.lf-code-dark .token.url {
+  color: #ff7b72 !important;
+}
+
+.lf-code-dark .token.atrule,
+.lf-code-dark .token.keyword {
+  color: #ff7b72 !important;
+}
+
+.lf-code-dark .token.function {
+  color: #d2a8ff !important;
+}
+
+/* Light mode code editor theme */
+.lf-code-light {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+.lf-code-light code,
+.lf-code-light pre {
+  background-color: transparent !important;
+  color: #0f172a !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
+
+.lf-code-light .token.comment {
+  color: #64748b !important;
+  font-style: italic !important;
+}
+
+.lf-code-light .token.tag {
+  color: #15803d !important;
+}
+
+.lf-code-light .token.attr-name,
+.lf-code-light .token.property {
+  color: #0369a1 !important;
+}
+
+.lf-code-light .token.attr-value,
+.lf-code-light .token.string {
+  color: #047857 !important;
+}
+
+.lf-code-light .token.selector {
+  color: #7c3aed !important;
+}
+
+.lf-code-light .token.number {
+  color: #c2410c !important;
+}
+
+.lf-code-light .token.punctuation {
+  color: #475569 !important;
+}
+
+.lf-code-light .token.doctype,
+.lf-code-light .token.keyword {
+  color: #b91c1c !important;
+}
+
+/* ===================================================
+   LayoutForge Studio Animation Keyframes & Classes
+   =================================================== */
+
+@keyframes lf-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes lf-slide-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lf-slide-down {
+  from { opacity: 0; transform: translateY(-32px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lf-slide-left {
+  from { opacity: 0; transform: translateX(32px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes lf-slide-right {
+  from { opacity: 0; transform: translateX(-32px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes lf-zoom-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes lf-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes lf-bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-16px); }
+  60% { transform: translateY(-8px); }
+}
+
+@keyframes lf-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes lf-flip {
+  from { transform: perspective(400px) rotateY(90deg); opacity: 0; }
+  to { transform: perspective(400px) rotateY(0deg); opacity: 1; }
+}
+
+@keyframes lf-rotate {
+  from { transform: rotate(-180deg) scale(0.7); opacity: 0; }
+  to { transform: rotate(0deg) scale(1); opacity: 1; }
+}
+
+/* Animation utility classes used by AnimationSection and Canvas elements */
+.anim-fade-in { animation: lf-fade-in 0.6s ease-out both; }
+.anim-slide-up { animation: lf-slide-up 0.6s ease-out both; }
+.anim-slide-down { animation: lf-slide-down 0.6s ease-out both; }
+.anim-slide-left { animation: lf-slide-left 0.6s ease-out both; }
+.anim-slide-right { animation: lf-slide-right 0.6s ease-out both; }
+.anim-zoom-in { animation: lf-zoom-in 0.6s ease-out both; }
+.anim-pulse { animation: lf-pulse 0.6s ease-out both; }
+.anim-bounce { animation: lf-bounce 0.6s ease-out both; }
+.anim-shake { animation: lf-shake 0.6s ease-out both; }
+.anim-flip { animation: lf-flip 0.6s ease-out both; }
+.anim-rotate { animation: lf-rotate 0.6s ease-out both; }
+
+/* Group movement active indicator (Shift + mouse drag or card group drag) */
+.lf-group-moving {
+  outline: 2px dashed #2563EB !important;
+  outline-offset: 3px !important;
+  opacity: 0.92 !important;
+  pointer-events: none !important;
+  transition: none !important;
+}
+
+
