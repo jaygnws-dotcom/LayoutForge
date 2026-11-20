@@ -230,65 +230,87 @@ export default function StitchCommandBar({
     { label: '🔍 AI Critique', action: onOpenCritique }
   ];
 
+  const [isMinimizedOnMobile, setIsMinimizedOnMobile] = useState(false);
+
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center pointer-events-auto">
+    <div className="fixed bottom-18 lg:bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center pointer-events-auto max-w-[95vw]">
       {/* Feedback Toast */}
       {lastFeedback && (
         <div className="mb-2 bg-neutral-900/90 text-white text-xs font-medium px-4 py-1.5 rounded-full shadow-xl flex items-center gap-2 backdrop-blur-md animate-in fade-in slide-in-from-bottom-2">
           <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-          <span className="truncate max-w-sm">{lastFeedback}</span>
+          <span className="truncate max-w-xs sm:max-w-sm">{lastFeedback}</span>
         </div>
       )}
 
-      {/* Main Stitch Command Bar */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleExecuteCommand();
-        }}
-        className="bg-surface/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl p-1.5 flex flex-col items-center transition-all min-w-[340px] sm:min-w-[480px] max-w-xl ring-1 ring-black/5"
-      >
-        <div className="flex items-center gap-2 w-full px-2 py-1">
-          <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-            <Sparkles className="w-4 h-4" />
+      {isMinimizedOnMobile ? (
+        <button
+          type="button"
+          onClick={() => setIsMinimizedOnMobile(false)}
+          className="lg:hidden flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface/95 backdrop-blur-xl border border-border shadow-lg text-xs font-semibold text-primary hover:bg-muted transition-all cursor-pointer ring-1 ring-black/5"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+          <span>Ask Stitch AI</span>
+        </button>
+      ) : (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleExecuteCommand();
+          }}
+          className="bg-surface/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl p-1.5 flex flex-col items-center transition-all w-[94vw] sm:w-auto min-w-0 sm:min-w-[440px] max-w-xl ring-1 ring-black/5"
+        >
+          <div className="flex items-center gap-2 w-full px-1.5 sm:px-2 py-1">
+            <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+              <Sparkles className="w-4 h-4" />
+            </div>
+
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask Stitch (e.g. 'Build architecture studio site', 'Center all')..."
+              className="flex-1 bg-transparent text-xs text-onSurface outline-none placeholder:text-secondary/70 font-sans select-text min-w-0"
+            />
+
+            <button
+              type="submit"
+              disabled={!input.trim() || isProcessing}
+              className="w-7 h-7 rounded-xl bg-primary text-white flex items-center justify-center hover:opacity-90 disabled:opacity-40 transition-all cursor-pointer shadow-xs shrink-0"
+              title="Execute Stitch Command"
+            >
+              {isProcessing ? (
+                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <ArrowRight className="w-3.5 h-3.5" />
+              )}
+            </button>
+
+            {/* Mobile Minimize button */}
+            <button
+              type="button"
+              onClick={() => setIsMinimizedOnMobile(true)}
+              className="lg:hidden p-1 text-secondary hover:text-onSurface rounded cursor-pointer"
+              title="Minimize command bar"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask Stitch (e.g. 'Build architecture studio site', 'Center all', 'Dark mode')..."
-            className="flex-1 bg-transparent text-xs text-onSurface outline-none placeholder:text-secondary/70 font-sans select-text"
-          />
-
-          <button
-            type="submit"
-            disabled={!input.trim() || isProcessing}
-            className="w-7 h-7 rounded-xl bg-primary text-white flex items-center justify-center hover:opacity-90 disabled:opacity-40 transition-all cursor-pointer shadow-xs shrink-0"
-            title="Execute Stitch Command"
-          >
-            {isProcessing ? (
-              <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <ArrowRight className="w-3.5 h-3.5" />
-            )}
-          </button>
-        </div>
-
-        {/* Quick Action Chips */}
-        <div className="flex items-center gap-1.5 pt-1.5 border-t border-border/50 w-full px-1 overflow-x-auto">
-          {QUICK_PROMPTS.map((q, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={q.action}
-              className="px-2.5 py-1 rounded-lg bg-muted/80 hover:bg-muted text-[11px] font-medium text-onSurface transition-colors whitespace-nowrap cursor-pointer hover:shadow-2xs"
-            >
-              {q.label}
-            </button>
-          ))}
-        </div>
-      </form>
+          {/* Quick Action Chips */}
+          <div className="flex items-center gap-1.5 pt-1.5 border-t border-border/50 w-full px-1 overflow-x-auto scrollbar-none">
+            {QUICK_PROMPTS.map((q, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={q.action}
+                className="px-2.5 py-1 rounded-lg bg-muted/80 hover:bg-muted text-[11px] font-medium text-onSurface transition-colors whitespace-nowrap cursor-pointer hover:shadow-2xs"
+              >
+                {q.label}
+              </button>
+            ))}
+          </div>
+        </form>
+      )}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import * as LucideIcons from 'lucide-react';
 import { Plus } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
 
-export default function PaletteItem({ item }) {
+export default function PaletteItem({ item, onItemAdded }) {
   const { addElement } = useProjectStore();
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `palette_${item.type}`,
@@ -27,6 +27,7 @@ export default function PaletteItem({ item }) {
   const handleQuickAdd = (e) => {
     e.stopPropagation();
     addElement(item.type, 200, 200);
+    if (onItemAdded) onItemAdded(item);
   };
 
   return (
@@ -56,7 +57,7 @@ export default function PaletteItem({ item }) {
       <button
         onClick={handleQuickAdd}
         title="Quick add to canvas"
-        className="opacity-0 group-hover:opacity-100 p-1 rounded-md bg-accentSoft hover:bg-primary text-primary hover:text-white transition-all ml-1 flex-shrink-0"
+        className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-1.5 rounded-lg bg-accentSoft hover:bg-primary text-primary hover:text-white transition-all ml-1 flex-shrink-0 cursor-pointer shadow-2xs"
       >
         <Plus className="w-3.5 h-3.5" />
       </button>

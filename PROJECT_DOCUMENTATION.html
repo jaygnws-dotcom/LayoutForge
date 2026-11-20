@@ -1,0 +1,2401 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      LayoutForge — Full Project Architecture, Engineering & Features Guide
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --primary-light: #60a5fa;
+        --accent-soft: #eff6ff;
+        --accent-purple: #8b5cf6;
+        --accent-emerald: #10b981;
+        --accent-amber: #f59e0b;
+        --accent-rose: #f43f5e;
+
+        /* --bg: #0B0F19; */
+        /* --bg-surface: #111827; */
+        /* --bg-surface-elevated: #1f2937; */
+        /* --bg-card: rgba(17, 24, 39, 0.7); */
+
+        --border: #374151;
+        --border-subtle: rgba(75, 85, 99, 0.4);
+        --border-focus: #3b82f6;
+
+        --text-main: #0b0f19;
+        --text-muted: #111827;
+        --text-dim: #1f2937;
+
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+
+        --font-sans:
+          "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background-color: var(--bg);
+        color: var(--text-main);
+        font-family: var(--font-sans);
+        line-height: 1.6;
+      }
+
+      body {
+        background-color: var(--bg);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      /* Top Navigation Header */
+      header.doc-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(242, 243, 245, 0.85);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .header-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: var(--text-main);
+      }
+
+      .brand-badge {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--accent-purple)
+        );
+        color: #fff;
+        font-weight: 800;
+        font-size: 0.95rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: var(--radius-sm);
+        letter-spacing: -0.5px;
+      }
+
+      .brand-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+
+      .header-links {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
+      .header-links a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: color 0.15s ease;
+      }
+
+      .header-links a:hover {
+        color: var(--text-main);
+      }
+
+      .version-tag {
+        background: var(--bg-surface-elevated);
+        color: var(--primary-light);
+        border: 1px solid var(--border);
+        padding: 0.2rem 0.6rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-family: var(--font-mono);
+      }
+
+      /* Hero Section */
+      .hero {
+        padding: 4.5rem 2rem 3rem;
+        max-width: 1300px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 9999px;
+        background: rgba(37, 99, 235, 0.15);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: var(--primary-light);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+      }
+
+      .hero h1 {
+        font-size: 3.25rem;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -1.5px;
+        margin-bottom: 1.25rem;
+        /* background: linear-gradient(135deg, #ffffff 30%, #9ca3af 100%); */
+        -webkit-background-clip: text;
+        /* -webkit-text-fill-color: transparent; */
+      }
+
+      .hero p {
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        max-width: 820px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.6;
+      }
+
+      .hero-stats {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+
+      .stat-pill {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 0.75rem 1.5rem;
+        text-align: left;
+      }
+
+      .stat-val {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-main);
+        font-family: var(--font-mono);
+      }
+
+      .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Layout Wrapper */
+      .doc-layout {
+        display: flex;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 2rem;
+        gap: 2.5rem;
+        width: 100%;
+      }
+
+      /* Sidebar Navigation */
+      .doc-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 5rem;
+        height: calc(100vh - 6rem);
+        overflow-y: auto;
+        padding-right: 1rem;
+      }
+
+      .doc-sidebar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .doc-sidebar::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+
+      .nav-search {
+        margin-bottom: 1.25rem;
+        position: relative;
+      }
+
+      .nav-search input {
+        width: 100%;
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 0.6rem 0.85rem;
+        font-size: 0.85rem;
+        color: var(--text-main);
+        outline: none;
+        font-family: var(--font-sans);
+      }
+
+      .nav-search input:focus {
+        border-color: var(--primary);
+      }
+
+      .nav-group-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-dim);
+        font-weight: 700;
+        margin: 1.5rem 0 0.5rem 0.5rem;
+      }
+
+      .nav-list {
+        list-style: none;
+      }
+
+      .nav-list li a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.75rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border-radius: var(--radius-sm);
+        transition: all 0.15s ease;
+      }
+
+      .nav-list li a:hover {
+        color: var(--text-main);
+        background: var(--bg-surface);
+      }
+
+      .nav-list li a.active {
+        color: var(--primary-light);
+        background: rgba(37, 99, 235, 0.12);
+        font-weight: 600;
+      }
+
+      /* Main Content Area */
+      .doc-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .content-section {
+        margin-bottom: 4rem;
+        scroll-margin-top: 6rem;
+      }
+
+      .section-header {
+        border-bottom: 1px solid var(--border-subtle);
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .section-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--primary-light);
+        margin-bottom: 0.5rem;
+        display: inline-block;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: var(--text-main);
+        margin-bottom: 0.75rem;
+      }
+
+      h3 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: var(--text-main);
+        margin: 2rem 0 1rem;
+      }
+
+      h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin: 1.25rem 0 0.5rem;
+      }
+
+      p {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.7;
+      }
+
+      /* Cards & Grids */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .feature-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        position: relative;
+        transition:
+          transform 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .feature-card:hover {
+        border-color: rgba(59, 130, 246, 0.5);
+        transform: translateY(-2px);
+      }
+
+      .card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-md);
+        background: rgba(37, 99, 235, 0.15);
+        color: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+      }
+
+      .card-desc {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      /* Tables */
+      .table-container {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow-x: auto;
+        margin: 1.5rem 0 2.5rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 0.9rem;
+      }
+
+      th {
+        background: var(--bg-surface-elevated);
+        color: var(--text-main);
+        font-weight: 600;
+        padding: 0.9rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      td {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border-subtle);
+        color: var(--text-muted);
+        vertical-align: top;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .code-badge {
+        font-family: var(--font-mono);
+        background: rgba(37, 99, 235, 0.15);
+        color: var(--primary-light);
+        padding: 0.2rem 0.45rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.8rem;
+      }
+
+      .tag-badge {
+        display: inline-block;
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .tag-emerald {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+      }
+      .tag-purple {
+        background: rgba(139, 92, 246, 0.15);
+        color: #a78bfa;
+      }
+      .tag-amber {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+      }
+      .tag-rose {
+        background: rgba(244, 63, 94, 0.15);
+        color: #fb7185;
+      }
+
+      /* Code Blocks */
+      .code-window {
+        background: #0d1117;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        margin: 1.5rem 0;
+        overflow: hidden;
+      }
+
+      .code-window-bar {
+        background: #161b22;
+        padding: 0.6rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .dots {
+        display: flex;
+        gap: 6px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .dot-red {
+        background: #ff5f56;
+      }
+      .dot-yellow {
+        background: #ffbd2e;
+      }
+      .dot-green {
+        background: #27c93f;
+      }
+
+      .code-filename {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-dim);
+      }
+
+      pre {
+        padding: 1.25rem;
+        overflow-x: auto;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        color: #e6edf3;
+      }
+
+      code {
+        font-family: var(--font-mono);
+      }
+
+      /* Diagram / Flow Blocks */
+      .flow-diagram {
+        /* background: #0e131f; */
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        margin: 1.5rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .flow-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.25rem;
+        position: relative;
+      }
+
+      .step-number {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+      }
+
+      .step-content {
+        flex: 1;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1rem 1.25rem;
+      }
+
+      .step-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        margin-bottom: 0.25rem;
+      }
+
+      .step-desc {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      /* Callout Alert */
+      .callout {
+        border-left: 4px solid var(--primary);
+        background: rgba(37, 99, 235, 0.08);
+        padding: 1rem 1.25rem;
+        border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        margin: 1.5rem 0;
+      }
+
+      .callout-title {
+        font-weight: 700;
+        color: var(--primary-light);
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .callout p {
+        font-size: 0.9rem;
+        margin-bottom: 0;
+        color: var(--text-main);
+      }
+
+      /* Footer */
+      footer.doc-footer {
+        border-top: 1px solid var(--border-subtle);
+        padding: 3rem 2rem;
+        text-align: center;
+        background: var(--bg-surface);
+        color: var(--text-dim);
+        font-size: 0.85rem;
+        margin-top: auto;
+      }
+
+      @media (max-width: 980px) {
+        .doc-layout {
+          flex-direction: column;
+        }
+        .doc-sidebar {
+          width: 100%;
+          height: auto;
+          position: static;
+          border-bottom: 1px solid var(--border);
+          padding-bottom: 1.5rem;
+        }
+        .hero h1 {
+          font-size: 2.25rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="doc-header">
+      <a href="#" class="header-brand">
+        <span class="brand-badge">LF</span>
+        <span class="brand-title"
+          >LayoutForge Architecture & Technical Guide</span
+        >
+      </a>
+      <div class="header-links">
+        <span class="version-tag">Engine v2.4 • 55 Tests Passing</span>
+        <a href="#features">Features</a>
+        <a href="#technologies">Tech Stack</a>
+        <a href="#coding-flow">Coding Flow</a>
+        <a href="#ai-engine">AI Architecture</a>
+        <a href="#dnd-logic">DND Logic</a>
+        <a href="#file-matrix">File Directory</a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badge">
+        ✨ Complete Technical & Architectural Specification
+      </div>
+      <h1>Under the Hood of LayoutForge</h1>
+      <p>
+        A comprehensive deep-dive into the internal engine, drag-and-drop
+        coordinate math, deterministic AI generation, file-by-file breakdown,
+        library mapping, and full responsive coding flow.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat-pill">
+          <div class="stat-val">19+</div>
+          <div class="stat-label">Canvas Elements</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val">18</div>
+          <div class="stat-label">Stitch Vibes</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val">55/55</div>
+          <div class="stat-label">Vitest Tests Passed</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val">0</div>
+          <div class="stat-label">External AI API Deps</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val">40</div>
+          <div class="stat-label">Undo/Redo History Steps</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Container -->
+    <div class="doc-layout">
+      <!-- Sidebar Navigation -->
+      <aside class="doc-sidebar">
+        <div class="nav-search">
+          <input
+            type="text"
+            id="quickFilter"
+            placeholder="Filter sections..."
+            onkeyup="filterNav()"
+          />
+        </div>
+
+        <div class="nav-group-title">Navigation</div>
+        <ul class="nav-list" id="navList">
+          <li><a href="#overview" class="active">1. System Overview</a></li>
+          <li><a href="#features">2. Complete Feature List</a></li>
+          <li><a href="#technologies">3. Technology Stack</a></li>
+          <li><a href="#libraries">4. Library Use-Case Matrix</a></li>
+          <li><a href="#coding-flow">5. Coding Flow & Lifecycle</a></li>
+          <li><a href="#dnd-logic">6. Drag & Drop Logic Deep-Dive</a></li>
+          <li><a href="#ai-engine">7. AI Logic & Vision Architecture</a></li>
+          <li>
+            <a href="#stitch-system">8. Stitch Vibes & Markdown Tokens</a>
+          </li>
+          <li>
+            <a href="#responsive-engine">9. Responsive & Export Pipeline</a>
+          </li>
+          <li><a href="#file-matrix">10. File-by-File Breakdown</a></li>
+          <li><a href="#testing-qa">11. Test Suite & Verification</a></li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="doc-content">
+        <!-- 1. System Overview -->
+        <section id="overview" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 01</span>
+            <h2>System Overview & Design Philosophy</h2>
+          </div>
+          <p>
+            <strong>LayoutForge</strong> is an AI-augmented visual layout
+            builder, canvas editor, and code generation engine built for modern
+            web applications. It bridges the gap between Figma-style freeform
+            visual manipulation and production-grade software engineering,
+            enabling users to assemble pages visually, explore curated design
+            vibes inspired by Google Stitch, and export 100% clean, semantic
+            code.
+          </p>
+
+          <div class="callout">
+            <div class="callout-title">
+              Core Architecture Paradigm: Dual Coordinate & Dual Layout Engine
+            </div>
+            <p>
+              Unlike simple block builders that restrict components to rigid 1D
+              vertical stacks, LayoutForge runs an interactive 2D spatial canvas
+              with sub-pixel absolute coordinate placement (1440px desktop
+              reference), coupled with a sophisticated
+              <strong
+                >Semantic Flow Compiler (`src/engine/responsive.js`)</strong
+              >
+              that compiles absolute geometric placements into clean, responsive
+              CSS Flexbox/Grid structures with <code>clamp()</code> fluid
+              typography and dynamic viewport adaptation.
+            </p>
+          </div>
+
+          <div class="card-grid">
+            <div class="feature-card">
+              <div class="card-icon">🎯</div>
+              <div class="card-title">Freeform Visual Studio</div>
+              <div class="card-desc">
+                Sub-pixel drag-and-drop, 8-handle box resizing, magnetic snap
+                guides, multi-selection, and group translation.
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-icon">🧠</div>
+              <div class="card-title">Offline Heuristic AI</div>
+              <div class="card-desc">
+                Zero external API dependencies or latency. Deterministic natural
+                language synthesis and HTML5 Canvas pixel sampling for
+                image-to-design mockups.
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-icon">📦</div>
+              <div class="card-title">Multi-Stack Code Export</div>
+              <div class="card-desc">
+                One-click downloads of zero-dependency HTML5/CSS single files,
+                or full React 18 + TypeScript + Material UI (MUI v5) zip
+                bundles.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Features -->
+        <section id="features" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 02</span>
+            <h2>Complete Project Features Catalog</h2>
+          </div>
+          <p>
+            LayoutForge contains a rich suite of visual editing, AI layout
+            synthesis, responsive design, and code generation capabilities:
+          </p>
+
+          <div class="card-grid">
+            <div class="feature-card">
+              <div class="card-title">🖥️ Interactive Visual Canvas</div>
+              <div class="card-desc">
+                Infinite panning and zoom (25% to 200%), dot / square /
+                12-column grid overlays, live magnetic snap alignment guides,
+                and right-click context menu (Cut, Copy, Paste, Duplicate, Lock,
+                Hide, Layer Arrange).
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">✋ Dual-Layer Drag & Drop</div>
+              <div class="card-desc">
+                Palette-to-canvas dragging powered by
+                <code>@dnd-kit/core</code> with pointer thresholding, and
+                on-canvas transform resizing & dragging powered by
+                <code>react-rnd</code> with synchronized multi-selection group
+                moves.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">📱 Intelligent Viewport Switching</div>
+              <div class="card-desc">
+                Instant viewport preview and design modes:
+                <strong>Desktop (1440px)</strong>,
+                <strong>Tablet (768px)</strong>, and
+                <strong>Mobile (375px)</strong> with dynamic artboard height
+                expansion and automated responsive stacking.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">📄 Multi-Page Project Architecture</div>
+              <div class="card-desc">
+                Create, duplicate, delete, and rename multiple pages (e.g. Home,
+                About, Pricing, Contact) with dedicated route paths and
+                page-level background and typography settings.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">🎨 Stitch Design System & 18 Vibes</div>
+              <div class="card-desc">
+                Global one-click design theme tokens (Minimalism, Neo-Brutalism,
+                Cyberpunk, Kyoto Zen, Swiss Bauhaus, Glass Effect, Cosmic
+                Gradient) that re-style colors, borders, shadows, and Google
+                Fonts instantly.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">📑 Markdown Design Token Importer</div>
+              <div class="card-desc">
+                Upload or paste <code>design.md</code> or style guides.
+                Automatically extracts hex codes, radii, semantic tokens, and
+                injects Google Fonts on the fly into the browser DOM.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">
+                🤖 Natural Language AI Page Generator
+              </div>
+              <div class="card-desc">
+                Generates complete coordinated layouts across 8 industry
+                archetypes (SaaS, Architecture, AI, Agency, E-Commerce, etc.)
+                from plain English prompts or built-in templates.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">👁️ AI Vision: Image-to-Design Engine</div>
+              <div class="card-desc">
+                Upload design screenshots or wireframes. Samples pixel colors
+                using HTML5 Canvas, computes perceived luminance, detects
+                structural layout, and generates an editable canvas layout.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">🪄 AI Section Copilot & Stylist</div>
+              <div class="card-desc">
+                Bespoke section generator (Hero, Pricing, Testimonials, FAQ) and
+                component polisher that optimizes contrast, harmony, and
+                micro-interactions.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">🔍 Stitch AI Design Critique & Fix</div>
+              <div class="card-desc">
+                Analyzes canvas elements for WCAG color contrast, touch target
+                size (44px min), readability, and alignment. Features a 1-click
+                "Auto-Polish" fix engine.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">🧩 19+ Element Catalog</div>
+              <div class="card-desc">
+                Navbar, Footer, Hero, Cards, Containers, Headings (H1-H4),
+                Paragraphs, Badges, Buttons, Lists, Form Inputs, Selects,
+                Checkboxes, Radios, Images, Videos, Icons, Dividers.
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">🚀 Full-Stack Code Export</div>
+              <div class="card-desc">
+                Export pure semantic HTML5 + CSS (single file, 0 dependencies)
+                or a complete production React 18 + TypeScript + MUI v5 ZIP
+                project bundle with Vite setup.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Technology Stack -->
+        <section id="technologies" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 03</span>
+            <h2>Technology Stack</h2>
+          </div>
+          <p>
+            LayoutForge is built on modern, lightning-fast web technologies with
+            zero backend dependencies, enabling seamless client-side execution,
+            offline operation, and rapid development.
+          </p>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Technology</th>
+                  <th>Category</th>
+                  <th>Version</th>
+                  <th>Role in LayoutForge</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>React</strong></td>
+                  <td>
+                    <span class="tag-badge tag-emerald">UI Framework</span>
+                  </td>
+                  <td><span class="code-badge">18.3.1</span></td>
+                  <td>
+                    Declarative UI component tree, state synchronization, fiber
+                    reconciliation, and DOM management.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>TypeScript</strong></td>
+                  <td><span class="tag-badge tag-purple">Language</span></td>
+                  <td><span class="code-badge">7.0.2 / 5.x</span></td>
+                  <td>
+                    Strict type safety across engine generators, element
+                    schemas, vibe tokens, and props validation.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Vite</strong></td>
+                  <td><span class="tag-badge tag-amber">Build Tool</span></td>
+                  <td><span class="code-badge">6.0.7</span></td>
+                  <td>
+                    Next-generation lightning-fast frontend tooling, Hot Module
+                    Replacement (HMR), and ES modules bundling.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Zustand</strong></td>
+                  <td>
+                    <span class="tag-badge tag-emerald">State Store</span>
+                  </td>
+                  <td><span class="code-badge">5.0.3</span></td>
+                  <td>
+                    Centralized project state store, atomic updates, 40-step
+                    undo/redo stack, and localStorage persistence.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Tailwind CSS</strong></td>
+                  <td><span class="tag-badge tag-purple">Styling</span></td>
+                  <td><span class="code-badge">3.4.17</span></td>
+                  <td>
+                    Utility-first CSS styling for the studio layout, sidebars,
+                    modals, toolbars, and inspector panels.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Material UI (MUI v5/v9)</strong></td>
+                  <td>
+                    <span class="tag-badge tag-purple">Design System</span>
+                  </td>
+                  <td><span class="code-badge">9.5.0</span></td>
+                  <td>
+                    Advanced studio UI components (drawers, dialogs, sliders,
+                    switches) and target export engine.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Vitest</strong></td>
+                  <td><span class="tag-badge tag-rose">Testing</span></td>
+                  <td><span class="code-badge">2.1.8</span></td>
+                  <td>
+                    Ultra-fast unit and integration test runner executing 55
+                    tests across responsive, AI, and export engines.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 4. Library Matrix -->
+        <section id="libraries" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 04</span>
+            <h2>Which Library is Used for Which Use Case</h2>
+          </div>
+          <p>
+            Every library in <code>package.json</code> was chosen with
+            architectural purpose to satisfy specific design and functional
+            requirements:
+          </p>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Library Name</th>
+                  <th>Exact Use Case in Project</th>
+                  <th>Key Integration Files</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong class="code-badge">@dnd-kit/core</strong></td>
+                  <td>
+                    Handles <strong>palette-to-canvas drag-and-drop</strong>.
+                    Captures pointer sensors, mouse activation thresholds (4px
+                    constraint), drag overlay, and drop detection onto the
+                    canvas artboard.
+                  </td>
+                  <td>
+                    <code>src/App.tsx</code><br /><code
+                      >src/components/palette/PaletteItem.jsx</code
+                    ><br /><code>src/components/canvas/CanvasArtboard.jsx</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge">@dnd-kit/utilities</strong>
+                  </td>
+                  <td>
+                    Provides CSS transform utilities
+                    (<code>CSS.Translate.toString</code>) and coordinate helpers
+                    during drag gestures.
+                  </td>
+                  <td><code>src/components/palette/PaletteItem.jsx</code></td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">react-rnd</strong></td>
+                  <td>
+                    Provides
+                    <strong
+                      >canvas element transform, drag and 8-handle
+                      resizing</strong
+                    >. Manages element X, Y, Width, Height, min/max dimension
+                    bounds, and aspect ratio locks.
+                  </td>
+                  <td><code>src/components/canvas/CanvasElement.jsx</code></td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">zustand</strong></td>
+                  <td>
+                    Manages <strong>global project state</strong>: active page,
+                    elements array, multi-selection, history stack (undo/redo),
+                    zoom, snap settings, active device, and clipboard.
+                  </td>
+                  <td><code>src/store/useProjectStore.js</code></td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">@mui/material</strong></td>
+                  <td>
+                    Provides high-fidelity studio widgets:
+                    <code>ThemeProvider</code>, <code>CssBaseline</code>, drawer
+                    menus, sliders, modals, and tabs.
+                  </td>
+                  <td>
+                    <code>src/main.tsx</code><br /><code
+                      >src/theme/muiTheme.ts</code
+                    ><br /><code
+                      >src/components/layout/StudioMenuDrawer.tsx</code
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge">@emotion/react & styled</strong>
+                  </td>
+                  <td>
+                    CSS-in-JS engine underpinning Material UI styling, dynamic
+                    theme generation, and class name resolution.
+                  </td>
+                  <td>
+                    <code>src/main.tsx</code><br /><code
+                      >src/theme/muiTheme.ts</code
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">lucide-react</strong></td>
+                  <td>
+                    Vector icons for UI controls, palette categories, canvas
+                    buttons, alignment toolbars, and the 100+ icon Asset
+                    Library.
+                  </td>
+                  <td>
+                    <code>src/components/assets/AssetLibraryModal.tsx</code
+                    ><br /><code
+                      >src/components/canvas/RenderElementContent.jsx</code
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge">@mui/icons-material</strong>
+                  </td>
+                  <td>
+                    Material Design icons used across drawer options, navigation
+                    components, and Material UI code generator templates.
+                  </td>
+                  <td>
+                    <code>src/components/layout/StudioMenuDrawer.tsx</code
+                    ><br /><code>src/engine/reactMuiGenerator.ts</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">jszip</strong></td>
+                  <td>
+                    In-browser client-side ZIP packaging. Bundles generated
+                    HTML, CSS, React TSX, theme tokens, assets, and project
+                    files into a downloadable archive.
+                  </td>
+                  <td>
+                    <code>src/engine/assetExtractor.js</code><br /><code
+                      >src/components/export/ExportModal.tsx</code
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">prismjs</strong></td>
+                  <td>
+                    Client-side syntax highlighting in Export Modals (HTML, CSS,
+                    TypeScript, JSON tabs) with formatted token coloring.
+                  </td>
+                  <td><code>src/components/export/ExportModal.tsx</code></td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">vitest</strong></td>
+                  <td>
+                    Unit test runner executing test suites for layout math,
+                    responsive compilation, group dragging, image analysis, and
+                    MUI generators.
+                  </td>
+                  <td><code>src/tests/*.test.js</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 5. Coding Flow -->
+        <section id="coding-flow" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 05</span>
+            <h2>Application Coding Flow & Execution Lifecycle</h2>
+          </div>
+          <p>
+            The following flow diagram illustrates how data, user events, and
+            state mutations move through LayoutForge from bootstrap to canvas
+            rendering and export:
+          </p>
+
+          <div class="flow-diagram">
+            <div class="flow-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <div class="step-title">
+                  App Initialization (main.tsx & App.tsx)
+                </div>
+                <div class="step-desc">
+                  <code>main.tsx</code> wraps the application in Material UI's
+                  <code>ThemeProvider</code> with light studio theme tokens and
+                  mounts <code>App.tsx</code>. <code>App.tsx</code> establishes
+                  the global <code>DndContext</code> with pointer sensors,
+                  initializes modal states, and registers global keyboard
+                  shortcuts (e.g. <code>Ctrl+K</code> for AI Modal).
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <div class="step-title">
+                  State Hydration (useProjectStore.js)
+                </div>
+                <div class="step-desc">
+                  Zustand hydrates state from browser
+                  <code>localStorage</code> (key:
+                  <code>layoutforge_project_light_v2</code>). If no saved
+                  project exists, it initializes with a default multi-page
+                  schema (Home, About, Pricing, Contact) and populates the
+                  canvas with a curated responsive layout template.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <div class="step-title">3-Column Studio Layout Assembly</div>
+                <div class="step-desc">
+                  The workspace renders into three primary columns:
+                  <ul>
+                    <li>
+                      <strong>LeftSidebar:</strong> Renders Element Palette (19+
+                      drag items), Layers Tree, and Stitch Blocks.
+                    </li>
+                    <li>
+                      <strong>Center Canvas:</strong> Renders Artboard, grid
+                      overlay, magnetic snap guides, elements, and the floating
+                      Stitch Command Bar.
+                    </li>
+                    <li>
+                      <strong>RightSidebar:</strong> Contextual Properties
+                      Inspector. Displays element-specific controls (Geometry,
+                      Typography, Content, Colors, Borders, Animations) if an
+                      item is selected, or Page Settings if canvas background is
+                      clicked.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <div class="step-title">
+                  User Interaction & Reactive Store Updates
+                </div>
+                <div class="step-desc">
+                  When a user drags, resizes, types content, or changes colors,
+                  actions call store mutations (e.g.,
+                  <code>updateElement</code>, <code>setElementGeometry</code>).
+                  The store pushes snapshots into the 40-step
+                  <code>history</code> array for undo/redo and automatically
+                  writes updates to <code>localStorage</code>.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">5</div>
+              <div class="step-content">
+                <div class="step-title">Responsive Compilation & Export</div>
+                <div class="step-desc">
+                  When previewing or exporting,
+                  <code>responsive.js</code> groups absolute 2D elements into
+                  semantic horizontal rows, computes fluid
+                  <code>clamp()</code> typography, and passes structured AST to
+                  <code>htmlGenerator.js</code> or
+                  <code>reactMuiGenerator.ts</code>.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Drag and Drop Logic -->
+        <section id="dnd-logic" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 06</span>
+            <h2>How Drag and Drop Component Logic Works</h2>
+          </div>
+          <p>
+            LayoutForge implements a sophisticated
+            <strong>Two-Stage Drag and Drop Architecture</strong> designed to
+            deliver smooth 60fps performance and sub-pixel accuracy:
+          </p>
+
+          <h3>Stage 1: Palette-to-Canvas Drop (@dnd-kit)</h3>
+          <p>
+            When dragging a new element from the left component catalog into the
+            artboard:
+          </p>
+
+          <div class="code-window">
+            <div class="code-window-bar">
+              <div class="dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+              </div>
+              <span class="code-filename"
+                >Drag-and-Drop Coordinate Normalization Math in App.tsx</span
+              >
+            </div>
+            <pre><code>// 1. PointerSensor activation constraint (requires 4px movement before drag initiates)
+const sensors = useSensors(
+  useSensor(PointerSensor, { activationConstraint: { distance: 4 } })
+);
+
+// 2. Drop Coordinate Translation inside handleDragEnd
+const handleDragEnd = (event: DragEndEvent) => {
+  const { active, over, delta, activatorEvent } = event;
+  if (!over || over.id !== 'canvas-artboard') return;
+
+  const currentData = active.data?.current;
+  if (currentData?.isPaletteItem && currentData.type) {
+    const artboardEl = document.querySelector('[data-canvas="artboard"]');
+    const mouseEv = activatorEvent as MouseEvent;
+    const rect = artboardEl.getBoundingClientRect();
+
+    // Map screen mouse coordinates + drag delta relative to artboard and zoom factor
+    const dropClientX = mouseEv.clientX + delta.x;
+    const dropClientY = mouseEv.clientY + delta.y;
+
+    let rawX = (dropClientX - rect.left) / zoom;
+    let rawY = (dropClientY - rect.top) / zoom;
+
+    // Apply magnetic grid snapping if enabled (e.g. 10px / 20px grid)
+    if (snapToGrid) {
+      rawX = Math.round(rawX / gridSize) * gridSize;
+      rawY = Math.round(rawY / gridSize) * gridSize;
+    }
+
+    // Clamp coordinates to stay cleanly inside the artboard boundaries
+    const dropX = Math.max(20, Math.round(rawX));
+    const dropY = Math.max(20, Math.round(rawY));
+
+    addElement(currentData.type, dropX, dropY);
+  }
+};</code></pre>
+          </div>
+
+          <h3>Stage 2: On-Canvas Transform & Resizing (react-rnd)</h3>
+          <p>
+            Once on the canvas, each element is wrapped by a
+            <code>&lt;Rnd&gt;</code> container from <code>react-rnd</code>:
+          </p>
+          <ul
+            style="
+              margin-left: 1.5rem;
+              color: var(--text-muted);
+              line-height: 1.8;
+            "
+          >
+            <li>
+              <strong>Positioning:</strong> Driven by
+              <code>position={{ x: element.x, y: element.y }}</code> and
+              <code
+                >size={{ width: element.width, height: element.height }}</code
+              >.
+            </li>
+            <li>
+              <strong>8-Point Resize Handles:</strong> Handles on top, bottom,
+              left, right, and all four corners with visual hover pills.
+            </li>
+            <li>
+              <strong>Minimum Dimensions:</strong> Bound by
+              <code>minWidth={30}</code> and <code>minHeight={20}</code> to
+              prevent accidental collapse.
+            </li>
+            <li>
+              <strong>Locked Elements:</strong> When
+              <code>element.locked === true</code>,
+              <code>disableDragging={true}</code> and resize handles are
+              disabled.
+            </li>
+          </ul>
+
+          <h3>Stage 3: Multi-Element & Hierarchical Group Movement</h3>
+          <p>
+            Moving multiple elements simultaneously is a notoriously difficult
+            performance challenge. LayoutForge solves this with
+            <strong>Direct DOM Matrix Translation</strong>:
+          </p>
+
+          <div class="flow-diagram">
+            <div class="flow-step">
+              <div class="step-number">A</div>
+              <div class="step-content">
+                <div class="step-title">
+                  Group Identification (groupingUtils.ts)
+                </div>
+                <div class="step-desc">
+                  On <code>onDragStart</code>,
+                  <code>getRelatedGroupIds()</code> checks if the user has
+                  multi-selected elements via <code>Shift + Click</code>,
+                  marquee box selection, or if the dragged element is a
+                  container holding children.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">B</div>
+              <div class="step-content">
+                <div class="step-title">60fps DOM Bypassing during Drag</div>
+                <div class="step-desc">
+                  Instead of triggering React re-renders on every mouse move,
+                  LayoutForge directly updates the CSS transforms of sibling
+                  elements:
+                  <code
+                    >node.style.transform = `translate3d(${dx}px, ${dy}px,
+                    0)`</code
+                  >. This ensures zero jank and fluid 60fps animations.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">C</div>
+              <div class="step-content">
+                <div class="step-title">Batch State Commit on Drop</div>
+                <div class="step-desc">
+                  When the user releases the mouse (<code>onDragStop</code>),
+                  the DOM transforms are reset and
+                  <code>moveElementsGroup(primaryId, relatedIds, dx, dy)</code>
+                  commits the new final X/Y coordinates to Zustand and the
+                  undo/redo history in a single atomic batch.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. AI Engine -->
+        <section id="ai-engine" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 07</span>
+            <h2>How AI Features Logically Work</h2>
+          </div>
+          <p>
+            A key engineering achievement of LayoutForge is its
+            <strong
+              >100% Offline, Privacy-First, Zero-Latency AI Architecture</strong
+            >. There are no expensive API keys, no external network calls, no
+            rate limits, and complete data privacy.
+          </p>
+
+          <div class="card-grid">
+            <div class="feature-card">
+              <div class="card-title">
+                1. Natural Language Prompt-to-Layout Engine
+                (`aiLayoutEngine.js`)
+              </div>
+              <div class="card-desc">
+                <p>
+                  Translates freeform English prompts (e.g.
+                  <em>"Modern architectural design studio portfolio"</em>) into
+                  pixel-perfect pages:
+                </p>
+                <ul
+                  style="
+                    font-size: 0.85rem;
+                    line-height: 1.6;
+                    margin-left: 1rem;
+                  "
+                >
+                  <li>
+                    <strong>Semantic Archetype Classification:</strong> Regular
+                    expression keyword scanning maps prompts into domain
+                    archetypes: <code>architecture</code>, <code>saas</code>,
+                    <code>ai</code>, <code>agency</code>, <code>pricing</code>,
+                    <code>contact</code>, <code>ecommerce</code>,
+                    <code>mobile</code>.
+                  </li>
+                  <li>
+                    <strong>Domain Knowledge Bases:</strong> Each archetype
+                    contains realistic copywriting, industry badges, feature
+                    cards, checklists, stats, and authentic imagery.
+                  </li>
+                  <li>
+                    <strong>Spatial Layout Computation:</strong> Calculates
+                    vertical offsets (<code>y</code> coordinate pacing),
+                    3-column card grids, responsive navbar positions, and button
+                    margins deterministically.
+                  </li>
+                  <li>
+                    <strong>Harmonic Palette Synthesis:</strong> Automatically
+                    assigns matched primary, accent, card surface, and font
+                    pairings (e.g. <em>Playfair Display</em> for Architecture,
+                    <em>Space Grotesk</em> for AI).
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="card-title">
+                2. AI Vision Image-to-Design Engine (`imageLayoutEngine.js`)
+              </div>
+              <div class="card-desc">
+                <p>
+                  Converts uploaded screenshots or wireframes into editable
+                  canvas elements:
+                </p>
+                <ul
+                  style="
+                    font-size: 0.85rem;
+                    line-height: 1.6;
+                    margin-left: 1rem;
+                  "
+                >
+                  <li>
+                    <strong>HTML5 Canvas Pixel Sampling:</strong> Renders
+                    uploaded images onto an offscreen canvas and samples raw
+                    RGBA pixel arrays via <code>ctx.getImageData()</code>.
+                  </li>
+                  <li>
+                    <strong>Perceived Luminance Calculation:</strong> Calculates
+                    ITU-R BT.709 relative luminance
+                    <code>Y = 0.2126*R + 0.7152*G + 0.0722*B</code> to detect
+                    light vs dark mode.
+                  </li>
+                  <li>
+                    <strong>Color Quantization:</strong> Samples
+                    top/center/bottom regions to extract dominant background
+                    colors, primary brand accents, and card surface tones.
+                  </li>
+                  <li>
+                    <strong>Structural Layout Synthesis:</strong> Uses aspect
+                    ratio and visual heuristics to generate matching navigation
+                    bars, hero titles, card columns, and call-to-actions.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3>
+            3. AI Design Critique & Auto-Polish Engine
+            (`StitchCritiqueModal.tsx`)
+          </h3>
+          <p>
+            Acts as an automated in-studio design lead, auditing canvas elements
+            for accessibility and visual hygiene:
+          </p>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Audit Check</th>
+                  <th>Logic & Formula</th>
+                  <th>Auto-Polish Fix Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>WCAG 2.1 Color Contrast</strong></td>
+                  <td>
+                    Calculates relative luminance ratio:
+                    <code>(L1 + 0.05) / (L2 + 0.05)</code> between text and
+                    element background. Flags if &lt; 4.5:1.
+                  </td>
+                  <td>
+                    Automatically updates font color to high-contrast dark
+                    (<code>#1A1A18</code>) or white (<code>#FFFFFF</code>).
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Touch Target Sizing</strong></td>
+                  <td>
+                    Checks if buttons or clickable links have
+                    <code>height &lt; 44px</code> or
+                    <code>width &lt; 44px</code> (Apple/Google accessibility
+                    standard).
+                  </td>
+                  <td>
+                    Adjusts button height to 44px and expands horizontal
+                    padding.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Typography Readability</strong></td>
+                  <td>
+                    Flags body text with font sizes below 12px or headings with
+                    improper line heights.
+                  </td>
+                  <td>
+                    Scales body text to 14.4px / 16px and normalizes line height
+                    to 1.5.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Border Radius Harmony</strong></td>
+                  <td>
+                    Detects clashing border radii across adjacent cards and
+                    containers.
+                  </td>
+                  <td>
+                    Harmonizes border radius across all cards to the active
+                    design token standard.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 8. Stitch System -->
+        <section id="stitch-system" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 08</span>
+            <h2>Google Stitch Vibe Engine & Markdown Design Tokens</h2>
+          </div>
+          <p>
+            Inspired by Google Stitch, LayoutForge introduces a cohesive design
+            token system allowing instant theme transformations across the
+            entire canvas.
+          </p>
+
+          <h3>
+            18 Curated Design Vibes (`src/types/vibes.ts` &
+            `src/engine/vibeEngine.ts`)
+          </h3>
+          <p>
+            Each Vibe encapsulates primary colors, surface backgrounds, text
+            colors, border styles, box shadows, and Google Font pairings:
+          </p>
+
+          <div class="card-grid">
+            <div class="feature-card">
+              <div class="card-title">Atelier Studio</div>
+              <div class="card-desc">
+                Warm architectural stone, near-black editorial typography,
+                Playfair Display & terracotta accent (<code>#B4573A</code>).
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-title">Linear Dark</div>
+              <div class="card-desc">
+                Deep graphite (<code>#0B0C10</code>), indigo violet accent,
+                crisp borders & subtle high-tech glow.
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-title">Neo-Brutalist</div>
+              <div class="card-desc">
+                Canary yellow (<code>#FFE600</code>), bold 3px black borders,
+                0px radius, and hard offset drop shadows.
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-title">Glass Effect</div>
+              <div class="card-desc">
+                Translucent surfaces (<code>rgba(255,255,255,0.7)</code>) with
+                hardware-accelerated <code>backdropFilter: blur(16px)</code>.
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-title">Cosmic Gradient</div>
+              <div class="card-desc">
+                Deep violet space backdrop with vivid magenta-to-purple linear
+                gradient buttons.
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-title">Swiss Bauhaus</div>
+              <div class="card-desc">
+                Geometric sans typography, strict grid alignment, stark
+                black/white with Bauhaus primary red.
+              </div>
+            </div>
+          </div>
+
+          <h3>
+            Markdown Design Token Parser (`src/engine/markdownDesignParser.ts`)
+          </h3>
+          <p>
+            Users can upload or paste any Markdown design document (such as
+            <code>design.md</code> or style guidelines):
+          </p>
+          <ul
+            style="
+              margin-left: 1.5rem;
+              color: var(--text-muted);
+              line-height: 1.8;
+            "
+          >
+            <li>
+              <strong>Hex Regex Extraction:</strong> Extracts all 3, 6, and
+              8-digit hex codes (<code>/#(?:[0-9a-fA-F]{3,8})\b/g</code>).
+            </li>
+            <li>
+              <strong>Semantic Token Mapping:</strong> Matches keys like
+              <code>primary: #6366F1</code>, <code>surface: #FFFFFF</code>,
+              <code>border: #E2E8F0</code>.
+            </li>
+            <li>
+              <strong>Dynamic Google Font Injection:</strong> When a font (e.g.
+              <em>Plus Jakarta Sans</em> or <em>Poppins</em>) is detected, it
+              dynamically appends a
+              <code>&lt;link rel="stylesheet"&gt;</code> to the HTML
+              <code>&lt;head&gt;</code>, rendering it instantly.
+            </li>
+          </ul>
+        </section>
+
+        <!-- 9. Responsive Engine -->
+        <section id="responsive-engine" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 09</span>
+            <h2>Intelligent Responsiveness & Export Engine</h2>
+          </div>
+
+          <h3>How Responsive Compilation Works (`src/engine/responsive.js`)</h3>
+          <p>
+            When switching between Desktop (1440px), Tablet (768px), and Mobile
+            (375px), or exporting code, the layout engine executes three
+            transformation stages:
+          </p>
+
+          <div class="flow-diagram">
+            <div class="flow-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <div class="step-title">Vertical Overlap Row Grouping</div>
+                <div class="step-desc">
+                  Elements are sorted by vertical position. The engine
+                  calculates whether sibling bounding boxes overlap vertically
+                  using
+                  <code
+                    >hasVerticalOverlap(y1, h1, y2, h2, threshold = 0.3)</code
+                  >. Overlapping elements are clustered into horizontal semantic
+                  rows.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <div class="step-title">Automatic Card Grid Stacking</div>
+                <div class="step-desc">
+                  <ul>
+                    <li>
+                      <strong>Desktop:</strong> Retains multi-column horizontal
+                      alignment with relative column widths (<code
+                        >--col-width: 33.3%</code
+                      >).
+                    </li>
+                    <li>
+                      <strong>Tablet (768px):</strong> 3-column rows
+                      automatically re-organize into 2-column balanced grids.
+                    </li>
+                    <li>
+                      <strong>Mobile (375px):</strong> Horizontal card rows
+                      stack vertically with full width (100%), margin
+                      adjustments, and expanded artboard height.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <div class="step-title">Fluid Typography Clamp Scaling</div>
+                <div class="step-desc">
+                  Computes mathematical CSS clamp functions for all font sizes:
+                  <br /><code
+                    >calculateFluidTypography(fontSizePx) &rarr; clamp(1.2rem,
+                    2.8vw + 0.5rem, 3.5rem)</code
+                  >
+                  <br />This guarantees headlines scale fluidly between mobile
+                  and 4K displays without breaking layouts.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3>Code Generation Engines</h3>
+          <div class="card-grid">
+            <div class="feature-card">
+              <div class="card-title">
+                Pure Semantic HTML5 + Vanilla CSS (`htmlGenerator.js`)
+              </div>
+              <div class="card-desc">
+                Generates a self-contained single-file HTML document with zero
+                external framework dependencies, embedded CSS variables,
+                responsive media queries, and keyframe animations. Ready to open
+                in any browser or deploy to Netlify/Vercel.
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-title">
+                Production React 18 + TypeScript + MUI v5
+                (`reactMuiGenerator.ts`)
+              </div>
+              <div class="card-desc">
+                Synthesizes a complete TypeScript codebase:
+                <code>App.tsx</code> (MUI components),
+                <code>theme.ts</code> (Material Design tokens),
+                <code>package.json</code>, <code>vite.config.ts</code>, and
+                <code>tsconfig.json</code>. Downloadable as a ready-to-run ZIP.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 10. File-by-File Breakdown -->
+        <section id="file-matrix" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 10</span>
+            <h2>Which File is Used for Which Use Case</h2>
+          </div>
+          <p>
+            A comprehensive directory catalog describing the role, use case, and
+            primary exports of every file in the codebase:
+          </p>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>File Path</th>
+                  <th>Primary Use Case & Responsibilities</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Root & Config -->
+                <tr>
+                  <td><strong class="code-badge">package.json</strong></td>
+                  <td>
+                    Defines project metadata, scripts (<code>dev</code>,
+                    <code>build</code>, <code>test</code>), and dependencies
+                    (@dnd-kit, react-rnd, zustand, mui, etc.).
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">vite.config.js</strong></td>
+                  <td>
+                    Vite build configuration with
+                    <code>@vitejs/plugin-react</code> and development server
+                    settings.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge">tailwind.config.js</strong>
+                  </td>
+                  <td>
+                    Tailwind CSS configuration defining custom studio color
+                    tokens (<code>primary</code>, <code>surface</code>,
+                    <code>accentSoft</code>, etc.).
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">src/main.tsx</strong></td>
+                  <td>
+                    Application entry point. Mounts React root, injects Material
+                    UI <code>ThemeProvider</code> and renders
+                    <code>App.tsx</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">src/App.tsx</strong></td>
+                  <td>
+                    Master studio orchestrator. Configures
+                    <code>DndContext</code>, pointer sensors, palette drop
+                    handler, layout columns, and modals.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong class="code-badge">src/index.css</strong></td>
+                  <td>
+                    Global stylesheet with Tailwind directives, font imports
+                    (Rethink Sans, Doto), and CSS animation keyframes.
+                  </td>
+                </tr>
+
+                <!-- Store -->
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/store/useProjectStore.js</strong
+                    >
+                  </td>
+                  <td>
+                    Global Zustand store. Houses project state, elements array,
+                    multi-page routing, 40-step undo/redo, alignment math, and
+                    localStorage persistence.
+                  </td>
+                </tr>
+
+                <!-- Engines -->
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/engine/aiLayoutEngine.js</strong
+                    >
+                  </td>
+                  <td>
+                    Deterministic AI layout generator. Parses natural language
+                    prompts, classifies 8 archetypes, generates element trees
+                    and palettes.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/engine/imageLayoutEngine.js</strong
+                    >
+                  </td>
+                  <td>
+                    AI Vision engine. Samples image pixels via HTML5 Canvas,
+                    calculates luminance, extracts color themes, and synthesizes
+                    layouts.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge">src/engine/responsive.js</strong>
+                  </td>
+                  <td>
+                    Responsive layout compiler. Groups elements into rows,
+                    calculates <code>clamp()</code> typography, and computes
+                    mobile/tablet stacking.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge">src/engine/vibeEngine.ts</strong>
+                  </td>
+                  <td>
+                    Stitch Vibe application engine. Propagates theme tokens
+                    (colors, radii, shadows, fonts, glass blur) across all
+                    canvas elements.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/engine/markdownDesignParser.ts</strong
+                    >
+                  </td>
+                  <td>
+                    Parses <code>design.md</code> token files, extracts hex
+                    codes, font families, and injects Google Fonts into document
+                    head.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/engine/htmlGenerator.js</strong
+                    >
+                  </td>
+                  <td>
+                    Compiles canvas elements into clean, semantic single-file
+                    HTML5 and vanilla CSS code with zero dependencies.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/engine/reactMuiGenerator.ts</strong
+                    >
+                  </td>
+                  <td>
+                    Generates a full production React 18 + TypeScript + Material
+                    UI (MUI v5) codebase bundle with Vite configuration.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/engine/assetExtractor.js</strong
+                    >
+                  </td>
+                  <td>
+                    Bundles project files and assets into downloadable ZIP
+                    archives using JSZip and FileSaver.
+                  </td>
+                </tr>
+
+                <!-- Canvas Components -->
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/canvas/CanvasArtboard.jsx</strong
+                    >
+                  </td>
+                  <td>
+                    The visual artboard container. Integrates
+                    <code>useDroppable</code>, marquee selection, context menus,
+                    and zoom scaling.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/canvas/CanvasElement.jsx</strong
+                    >
+                  </td>
+                  <td>
+                    Renders individual elements on canvas. Wraps content with
+                    <code>react-rnd</code> for dragging, resizing, and
+                    multi-selection movement.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/canvas/RenderElementContent.jsx</strong
+                    >
+                  </td>
+                  <td>
+                    Component renderer for all 19+ element types (Navbar, Hero,
+                    Cards, Badges, Typography, Form Inputs, Media).
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/canvas/SnapGuides.jsx</strong
+                    >
+                  </td>
+                  <td>
+                    Renders smart alignment lines and distance badges when
+                    elements align with siblings.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/canvas/GridOverlay.jsx</strong
+                    >
+                  </td>
+                  <td>
+                    Renders canvas background grids: Dot grid, Square grid, or
+                    12-column layout guide.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/canvas/ContextMenu.jsx</strong
+                    >
+                  </td>
+                  <td>
+                    Right-click contextual menu for canvas elements (Cut, Copy,
+                    Paste, Duplicate, Delete, Lock, Hide, Layer Order).
+                  </td>
+                </tr>
+
+                <!-- Layout & Navigation -->
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/layout/TopBar.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    Studio header. Controls device viewports, zoom, undo/redo,
+                    modal triggers, and project renaming.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/layout/LeftSidebar.jsx</strong
+                    >
+                  </td>
+                  <td>
+                    Left studio sidebar with tabs for Elements Palette (19+
+                    items), Layers Panel, and Stitch Blocks.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/layout/RightSidebar.jsx</strong
+                    >
+                  </td>
+                  <td>
+                    Right studio inspector. Displays contextual property panels
+                    for selected elements or page settings.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/layout/PageSwitcher.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    TopBar dropdown for managing multi-page routes: switch, add,
+                    duplicate, rename, or delete pages.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/layout/StudioMenuDrawer.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    Material UI slide-out menu drawer providing project-level
+                    actions, templates, and documentation links.
+                  </td>
+                </tr>
+
+                <!-- Stitch Studio Components -->
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/stitch/StitchVibeModal.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    Modal for browsing, filtering, and applying 18 Stitch design
+                    vibes, plus markdown <code>design.md</code> token upload.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/stitch/StitchCritiqueModal.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    AI design critique modal. Audits WCAG contrast, touch
+                    targets, and readability with 1-click Auto-Polish.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/stitch/StitchBlocksModal.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    Library of pre-composed high-fidelity blocks (Heroes,
+                    Features, Pricing, Testimonials, Footers).
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/stitch/StitchCommandBar.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    Floating bottom HUD bar for fast access to Vibes, Critique,
+                    Blocks, and canvas controls.
+                  </td>
+                </tr>
+
+                <!-- Modals -->
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/ai/AiPromptModal.jsx</strong
+                    >
+                  </td>
+                  <td>
+                    Dual-tab AI modal for natural language prompt-to-layout and
+                    image-to-design visual synthesis.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/ai/AiElementAssistantModal.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    AI Section Copilot & Stylist. Generates custom sections and
+                    enhances element micro-interactions.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/assets/AssetLibraryModal.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    Asset browser with Unsplash high-resolution photography and
+                    100+ Lucide vector icons.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/preview/PreviewModal.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    Full-screen interactive preview mode with live device
+                    switcher and responsive viewport simulation.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/export/ExportModal.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    Export dialog featuring HTML/CSS, React TSX, and ZIP
+                    download tabs with Prism syntax highlighting.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/export/JsonModal.tsx</strong
+                    >
+                  </td>
+                  <td>
+                    Raw project JSON schema viewer, validator, and blueprint
+                    importer/exporter.
+                  </td>
+                </tr>
+
+                <!-- Property Sections -->
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/components/properties/*</strong
+                    >
+                  </td>
+                  <td>
+                    Granular inspector panels: LayoutSection, SpacingSection,
+                    TypographySection, BackgroundSection, BorderShadowSection,
+                    ContentSection, AnimationSection, AlignmentToolbar,
+                    DeviceVisibilitySection, PageSettingsSection.
+                  </td>
+                </tr>
+
+                <!-- Types & Utilities -->
+                <tr>
+                  <td>
+                    <strong class="code-badge">src/types/elements.js</strong>
+                  </td>
+                  <td>
+                    Element schemas, default content, 19+ catalog definitions,
+                    typography presets, and theme colors.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge">src/types/vibes.ts</strong>
+                  </td>
+                  <td>
+                    TypeScript interfaces and definitions for all 18 Google
+                    Stitch design vibe theme tokens.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge">src/types/index.ts</strong>
+                  </td>
+                  <td>
+                    Core TypeScript types for elements, styles, pages, devices,
+                    and project blueprints.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong class="code-badge"
+                      >src/utils/groupingUtils.ts</strong
+                    >
+                  </td>
+                  <td>
+                    Bounding box math, container containment detection, and
+                    multi-selection group calculation.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 11. Test Suite -->
+        <section id="testing-qa" class="content-section">
+          <div class="section-header">
+            <span class="section-badge">Section 11</span>
+            <h2>Automated Verification & Test Suite</h2>
+          </div>
+          <p>
+            LayoutForge is backed by
+            <strong>55 automated unit and integration tests</strong> running on
+            Vitest to guarantee mathematical correctness, responsive layout
+            integrity, and code generation fidelity:
+          </p>
+
+          <div class="code-window">
+            <div class="code-window-bar">
+              <div class="dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+              </div>
+              <span class="code-filename"
+                >Terminal Output: npm test (Vitest v2.1.8)</span
+              >
+            </div>
+            <pre><code> RUN  v2.1.8 D:/New Jay/My Projects/Custom Design Layout
+
+ ✓ src/tests/reactMuiGenerator.test.js (6 tests)
+ ✓ src/tests/microInteractions.test.js (2 tests)
+ ✓ src/tests/responsive.test.js (14 tests)
+ ✓ src/tests/multiPage.test.js (4 tests)
+ ✓ src/tests/imageLayoutEngine.test.js (4 tests)
+ ✓ src/tests/groupingMovement.test.js (8 tests)
+ ✓ src/tests/aiLayoutEngine.test.js (6 tests)
+ ✓ src/tests/stitchFeatures.test.js (11 tests)
+
+ Test Files  8 passed (8)
+      Tests  55 passed (55)
+   Duration  3.19s</code></pre>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="doc-footer">
+      <p>
+        LayoutForge Architectural Documentation & Technical Manual • MIT License
+        © 2026 LayoutForge
+      </p>
+      <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-dim)">
+        Generated for Developer Reference & Codebase Onboarding
+      </p>
+    </footer>
+
+    <script>
+      // Quick filter script for sidebar items
+      function filterNav() {
+        const input = document.getElementById("quickFilter");
+        const filter = input.value.toLowerCase();
+        const list = document.getElementById("navList");
+        const items = list.getElementsByTagName("li");
+
+        for (let i = 0; i < items.length; i++) {
+          const text = items[i].textContent || items[i].innerText;
+          if (text.toLowerCase().indexOf(filter) > -1) {
+            items[i].style.display = "";
+          } else {
+            items[i].style.display = "none";
+          }
+        }
+      }
+
+      // Active anchor observer for sidebar
+      window.addEventListener("DOMContentLoaded", () => {
+        const links = document.querySelectorAll(".nav-list a");
+        const sections = document.querySelectorAll(".content-section");
+
+        window.addEventListener("scroll", () => {
+          let current = "";
+          sections.forEach((section) => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 120) {
+              current = section.getAttribute("id");
+            }
+          });
+
+          links.forEach((link) => {
+            link.classList.remove("active");
+            if (link.getAttribute("href") === "#" + current) {
+              link.classList.add("active");
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

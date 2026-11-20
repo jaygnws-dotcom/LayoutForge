@@ -285,7 +285,7 @@ export default function CanvasArtboard() {
         backgroundColor: workspaceBg,
         transition: 'background-color 0.35s ease'
       }}
-      className="flex-1 h-full overflow-auto relative p-12 flex justify-center items-start select-none cursor-default"
+      className="flex-1 h-full overflow-auto relative p-2 sm:p-6 md:p-12 pb-28 lg:pb-12 flex justify-center items-start select-none cursor-default"
     >
       {/* Scaled Artboard Wrapper */}
       <div
@@ -294,10 +294,10 @@ export default function CanvasArtboard() {
           transformOrigin: 'top center',
           transition: 'transform 0.15s ease-out'
         }}
-        className="my-4 flex flex-col items-center transition-all"
+        className="my-2 sm:my-4 flex flex-col items-center transition-all max-w-full"
       >
         {/* Figma-style Artboard Label Header */}
-        <div className={`flex items-center justify-between w-full mb-2 px-1 text-xs font-medium ${isDarkCanvas ? 'text-slate-400' : 'text-secondary'}`}>
+        <div className={`flex flex-wrap items-center justify-between gap-2 w-full mb-2 px-1 text-xs font-medium ${isDarkCanvas ? 'text-slate-400' : 'text-secondary'}`}>
           <div className="flex items-center gap-2.5">
             <div className="flex items-center gap-1.5">
               <DeviceIcon className="w-3.5 h-3.5 text-primary" />
@@ -384,7 +384,7 @@ export default function CanvasArtboard() {
             </div>
           </div>
 
-          <div className={`flex items-center gap-2 text-[11px] ${isDarkCanvas ? 'text-slate-400' : 'text-secondary'}`}>
+          <div className={`hidden sm:flex items-center gap-2 text-[11px] ${isDarkCanvas ? 'text-slate-400' : 'text-secondary'}`}>
             <span className="flex items-center gap-1 font-mono">
               <Move className="w-3 h-3 text-primary" />
               <span>Shift+Drag moves card + contents</span>

@@ -5,6 +5,7 @@ import { useProjectStore } from './store/useProjectStore';
 import TopBar from './components/layout/TopBar';
 import LeftSidebar from './components/layout/LeftSidebar';
 import RightSidebar from './components/layout/RightSidebar';
+import MobileFooter, { MobileTab } from './components/layout/MobileFooter';
 import CanvasArtboard from './components/canvas/CanvasArtboard';
 import PreviewModal from './components/preview/PreviewModal';
 import ExportModal from './components/export/ExportModal';
@@ -16,9 +17,10 @@ import StitchVibeModal from './components/stitch/StitchVibeModal';
 import StitchCritiqueModal from './components/stitch/StitchCritiqueModal';
 import StitchBlocksModal from './components/stitch/StitchBlocksModal';
 import StitchCommandBar from './components/stitch/StitchCommandBar';
+import { Sliders } from 'lucide-react';
 
 export default function App() {
-  const { addElement, zoom, snapToGrid, gridSize } = useProjectStore();
+  const { addElement, zoom, snapToGrid, gridSize, selectedElementIds, elements } = useProjectStore();
 
   const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
   const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
@@ -29,7 +31,9 @@ export default function App() {
   const [isVibesOpen, setIsVibesOpen] = useState<boolean>(false);
   const [isCritiqueOpen, setIsCritiqueOpen] = useState<boolean>(false);
   const [isBlocksOpen, setIsBlocksOpen] = useState<boolean>(false);
+  const [isStudioDrawerOpen, setIsStudioDrawerOpen] = useState<boolean>(false);
   const [aiPromptTab, setAiPromptTab] = useState<'prompt' | 'image'>('prompt');
+  const [mobileTab, setMobileTab] = useState<MobileTab>('canvas');
 
   // Keyboard shortcut Ctrl+K / Cmd+K to toggle AI Prompt modal
   useEffect(() => {
@@ -93,7 +97,7 @@ export default function App() {
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
       <div className="flex flex-col h-screen w-screen bg-muted text-onSurface font-sans overflow-hidden">
-        {/* Top Bar */}
+        {/* Top Bar Header */}
         <TopBar
           onOpenPreview={() => setIsPreviewOpen(true)}
           onOpenExport={() => setIsExportOpen(true)}
@@ -107,15 +111,20 @@ export default function App() {
           onOpenVibes={() => setIsVibesOpen(true)}
           onOpenCritique={() => setIsCritiqueOpen(true)}
           onOpenBlocks={() => setIsBlocksOpen(true)}
+          isStudioDrawerOpen={isStudioDrawerOpen}
+          onOpenStudioDrawer={() => setIsStudioDrawerOpen(true)}
+          onCloseStudioDrawer={() => setIsStudioDrawerOpen(false)}
         />
 
-        {/* 3-Column Studio Layout */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Left: Palette & Layers */}
-          <LeftSidebar />
+        {/* 3-Column Studio Layout with Mobile Responsiveness */}
+        <div className="flex flex-1 overflow-hidden relative">
+          {/* Desktop Left: Palette & Layers (hidden on mobile/tablet) */}
+          <div className="hidden lg:flex">
+            <LeftSidebar />
+          </div>
 
-          {/* Center: Infinite Canvas & Artboard */}
-          <main className="flex-1 h-full overflow-hidden relative">
+          {/* Center: Infinite Canvas & Artboard (full screen width on mobile) */}
+          <main className="flex-1 h-full overflow-hidden relative w-full">
             <CanvasArtboard />
 
             {/* Stitch Signature Floating Command Bar */}
@@ -124,11 +133,76 @@ export default function App() {
               onOpenCritique={() => setIsCritiqueOpen(true)}
               onOpenBlocks={() => setIsBlocksOpen(true)}
             />
+
+            {/* Mobile Quick Properties Floating Pill when element is selected */}
+            {selectedElementIds.length > 0 && mobileTab === 'canvas' && (
+              <button
+                type="button"
+                onClick={() => setMobileTab('properties')}
+                className="lg:hidden fixed bottom-20 right-4 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white shadow-xl text-xs font-semibold hover:bg-primaryDark transition-all cursor-pointer animate-in fade-in slide-in-from-bottom-2"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                <span>Properties ({selectedElementIds.length})</span>
+              </button>
+            )}
           </main>
 
-          {/* Right: Properties Inspector */}
-          <RightSidebar />
+          {/* Desktop Right: Properties Inspector (hidden on mobile/tablet) */}
+          <div className="hidden lg:flex">
+            <RightSidebar />
+          </div>
         </div>
+
+        {/* Mobile Slide-Over Drawers */}
+        {/* 1. LeftSidebar Drawer (Components / Layers) */}
+        {(mobileTab === 'components' || mobileTab === 'layers') && (
+          <div className="fixed inset-0 z-50 lg:hidden flex">
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+              onClick={() => setMobileTab('canvas')}
+            />
+            {/* Slide-over Sheet */}
+            <div className="relative w-full sm:w-96 max-w-[92vw] h-full bg-surface shadow-2xl z-10 flex flex-col animate-in slide-in-from-left duration-200">
+              <LeftSidebar
+                activeTab={mobileTab}
+                onTabChange={(tab: 'components' | 'layers') => setMobileTab(tab)}
+                onClose={() => setMobileTab('canvas')}
+                isMobile={true}
+                onItemAdded={() => {
+                  // After adding an element on mobile, user can continue adding or close
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 2. RightSidebar Drawer (Properties Inspector & Page Settings) */}
+        {mobileTab === 'properties' && (
+          <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+              onClick={() => setMobileTab('canvas')}
+            />
+            {/* Slide-over Sheet */}
+            <div className="relative w-full sm:w-96 max-w-[92vw] h-full bg-surface shadow-2xl z-10 flex flex-col animate-in slide-in-from-right duration-200">
+              <RightSidebar
+                onClose={() => setMobileTab('canvas')}
+                isMobile={true}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Bottom Navigation Bar (Footer) */}
+        <MobileFooter
+          activeTab={mobileTab}
+          onSelectTab={(tab) => setMobileTab(tab)}
+          onOpenStudioTools={() => setIsStudioDrawerOpen(true)}
+          selectedCount={selectedElementIds.length}
+          totalElements={elements.length}
+        />
 
         {/* Modals */}
         <PreviewModal
