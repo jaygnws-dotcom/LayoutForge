@@ -169,16 +169,16 @@ export default function ExportModal({ isOpen, onClose }: ExportModalProps) {
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 select-none animate-in fade-in duration-200">
       <div className="bg-surface border border-border rounded-2xl w-full max-w-5xl h-[92vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Modal Top Bar */}
-        <div className="h-16 border-b border-border px-6 flex items-center justify-between bg-surface shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20">
-              <Code2 className="w-5 h-5" />
+        <div className="min-h-16 py-2 border-b border-border px-3 sm:px-6 flex flex-wrap items-center justify-between gap-2 bg-surface shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20 shrink-0">
+              <Code2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-onSurface">Export Production Code</h2>
+                <h2 className="text-sm font-bold text-onSurface">Export Code</h2>
                 <Chip
-                  label={framework === 'react' ? 'React 18 + Material UI' : 'HTML5 & Clean CSS'}
+                  label={framework === 'react' ? 'React MUI' : 'HTML5'}
                   size="small"
                   sx={{
                     height: 20,
@@ -189,7 +189,7 @@ export default function ExportModal({ isOpen, onClose }: ExportModalProps) {
                   }}
                 />
               </div>
-              <p className="text-xs text-secondary mt-0.5">
+              <p className="hidden sm:block text-xs text-secondary mt-0.5">
                 {framework === 'react'
                   ? 'Modern React 18 with Material-UI (MUI v5), TypeScript tokens & responsive flex clustering'
                   : 'Semantic HTML5 markup with modular responsive CSS3 & vanilla JS interactions'}
@@ -197,7 +197,7 @@ export default function ExportModal({ isOpen, onClose }: ExportModalProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <Button
               variant="outlined"
               size="small"
@@ -206,7 +206,7 @@ export default function ExportModal({ isOpen, onClose }: ExportModalProps) {
               sx={{ textTransform: 'none', fontSize: '0.75rem', borderColor: 'divider', color: 'text.primary', borderRadius: 2 }}
               title={`Download ${currentFilename}`}
             >
-              Download {currentFilename}
+              <span className="hidden sm:inline">Download </span>{currentFilename}
             </Button>
 
             <Button

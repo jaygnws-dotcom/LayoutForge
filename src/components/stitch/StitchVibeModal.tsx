@@ -219,21 +219,21 @@ export default function StitchVibeModal({
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 select-none animate-in fade-in duration-200">
       <div className="bg-surface border border-border rounded-2xl w-full max-w-5xl h-[88vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="h-16 border-b border-border px-6 flex items-center justify-between bg-surface shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-purple-500/20">
-              <Sparkles className="w-5 h-5" />
+        <div className="min-h-16 py-2 border-b border-border px-3 sm:px-6 flex flex-wrap items-center justify-between gap-2 bg-surface shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-purple-500/20 shrink-0">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm font-bold text-onSurface">
-                  Stitch Design System & Vibe Engine
+                  Stitch Design Vibes
                 </h2>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200">
-                  {STITCH_VIBES.length} Curated Themes
+                <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200">
+                  {STITCH_VIBES.length} Themes
                 </span>
               </div>
-              <p className="text-xs text-secondary mt-0.5">
+              <p className="hidden sm:block text-xs text-secondary mt-0.5">
                 Switch structural design tokens, typography rules & color
                 harmonies across the entire project in 1-click
               </p>

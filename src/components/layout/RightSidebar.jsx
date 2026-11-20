@@ -10,9 +10,12 @@ import SpacingSection from '../properties/SpacingSection';
 import AnimationSection from '../properties/AnimationSection';
 import DeviceVisibilitySection from '../properties/DeviceVisibilitySection';
 import PageSettingsSection from '../properties/PageSettingsSection';
-import { Trash2, Files, Sliders, Box } from 'lucide-react';
+import { Trash2, Files, Sliders, Box, X } from 'lucide-react';
 
-export default function RightSidebar() {
+export default function RightSidebar({
+  onClose,
+  isMobile = false
+}) {
   const {
     elements, selectedElementIds,
     deleteElements, duplicateElements
@@ -22,34 +25,52 @@ export default function RightSidebar() {
   const singleSelected = selectedElements.length === 1 ? selectedElements[0] : null;
 
   return (
-    <aside className="w-80 border-l border-border bg-surface flex flex-col h-[calc(100vh-3.5rem)] select-none overflow-y-auto shadow-sm">
+    <aside
+      className={
+        isMobile
+          ? 'w-full h-full flex flex-col select-none bg-surface overflow-y-auto'
+          : 'w-72 xl:w-80 border-l border-border bg-surface flex flex-col h-[calc(100vh-3.5rem)] select-none overflow-y-auto shadow-sm'
+      }
+    >
       {/* Top Header */}
-      <div className="p-3 border-b border-border flex items-center justify-between text-xs text-onSurface bg-surface">
+      <div className="p-3 border-b border-border flex items-center justify-between text-xs text-onSurface bg-surface shrink-0">
         <div className="flex items-center gap-2">
           <Sliders className="w-4 h-4 text-primary" />
-          <span className="font-semibold uppercase tracking-wider text-[11px]">
+          <span className="font-semibold uppercase tracking-wider text-[11px] truncate max-w-[150px] sm:max-w-[180px]">
             {singleSelected ? singleSelected.name : selectedElements.length > 1 ? `Selection (${selectedElements.length})` : 'Page Settings'}
           </span>
         </div>
 
-        {selectedElements.length > 0 && (
-          <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1">
+          {selectedElements.length > 0 && (
+            <>
+              <button
+                onClick={() => duplicateElements()}
+                className="p-1 hover:text-onSurface text-secondary hover:bg-muted rounded cursor-pointer"
+                title="Duplicate (Ctrl+D)"
+              >
+                <Files className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => deleteElements()}
+                className="p-1 hover:text-error text-secondary hover:bg-red-50 rounded cursor-pointer"
+                title="Delete (Del)"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </>
+          )}
+
+          {isMobile && onClose && (
             <button
-              onClick={() => duplicateElements()}
-              className="p-1 hover:text-onSurface text-secondary hover:bg-muted rounded"
-              title="Duplicate (Ctrl+D)"
+              onClick={onClose}
+              className="p-1 text-secondary hover:text-onSurface hover:bg-muted rounded ml-1 cursor-pointer"
+              title="Close Properties"
             >
-              <Files className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => deleteElements()}
-              className="p-1 hover:text-error text-secondary hover:bg-red-50 rounded"
-              title="Delete (Del)"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {selectedElements.length > 1 && (

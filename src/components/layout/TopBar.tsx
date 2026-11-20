@@ -24,6 +24,9 @@ interface TopBarProps {
   onOpenVibes?: () => void;
   onOpenCritique?: () => void;
   onOpenBlocks?: () => void;
+  isStudioDrawerOpen?: boolean;
+  onOpenStudioDrawer?: () => void;
+  onCloseStudioDrawer?: () => void;
 }
 
 export default function TopBar({
@@ -35,7 +38,10 @@ export default function TopBar({
   onOpenAiCopilot,
   onOpenVibes,
   onOpenCritique,
-  onOpenBlocks
+  onOpenBlocks,
+  isStudioDrawerOpen: controlledDrawerOpen,
+  onOpenStudioDrawer,
+  onCloseStudioDrawer
 }: TopBarProps) {
   const {
     projectName, setProjectName,
@@ -49,7 +55,17 @@ export default function TopBar({
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(projectName);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [internalDrawerOpen, setInternalDrawerOpen] = useState(false);
+
+  const isDrawerOpen = controlledDrawerOpen !== undefined ? controlledDrawerOpen : internalDrawerOpen;
+  const handleOpenDrawer = () => {
+    if (onOpenStudioDrawer) onOpenStudioDrawer();
+    else setInternalDrawerOpen(true);
+  };
+  const handleCloseDrawer = () => {
+    if (onCloseStudioDrawer) onCloseStudioDrawer();
+    else setInternalDrawerOpen(false);
+  };
 
   const handleNameSubmit = () => {
     if (nameInput.trim()) {
@@ -60,27 +76,28 @@ export default function TopBar({
 
   return (
     <>
-      <header className="h-14 border-b border-border bg-surface px-4 flex items-center justify-between z-30 select-none shadow-sm">
+      <header className="h-14 border-b border-border bg-surface px-2 sm:px-4 flex items-center justify-between z-30 select-none shadow-sm w-full max-w-full overflow-hidden">
         {/* Left: Brand, Project Name & Multi-Page Switcher */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
           <Tooltip title="Reset to LayoutForge Light Template">
             <div
-              className="flex items-center gap-2 group cursor-pointer"
+              className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer shrink-0"
               onClick={resetTemplate}
             >
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-white shadow-md shadow-primary/25">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-white shadow-md shadow-primary/25 text-xs sm:text-sm">
                 LF
               </div>
-              <span className="font-bold text-sm tracking-tight text-onSurface hidden sm:inline">
+              <span className="font-bold text-sm tracking-tight text-onSurface hidden md:inline">
                 LayoutForge
               </span>
             </div>
           </Tooltip>
 
-          <div className="h-5 w-px bg-border mx-0.5" />
+          <div className="h-5 w-px bg-border mx-0.5 hidden xs:block shrink-0" />
 
+          {/* Project Name (Click to edit) */}
           {isEditingName ? (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0">
               <input
                 type="text"
                 value={nameInput}
@@ -88,11 +105,11 @@ export default function TopBar({
                 onKeyDown={(e) => e.key === 'Enter' && handleNameSubmit()}
                 onBlur={handleNameSubmit}
                 autoFocus
-                className="bg-muted border border-primary rounded px-2 py-0.5 text-xs text-onSurface outline-none w-36"
+                className="bg-muted border border-primary rounded px-1.5 py-0.5 text-xs text-onSurface outline-none w-24 sm:w-36"
               />
               <button
                 onClick={handleNameSubmit}
-                className="p-1 hover:text-primary text-secondary"
+                className="p-1 hover:text-primary text-secondary cursor-pointer"
               >
                 <Check className="w-3.5 h-3.5" />
               </button>
@@ -104,27 +121,29 @@ export default function TopBar({
                   setNameInput(projectName);
                   setIsEditingName(true);
                 }}
-                className="flex items-center gap-1 text-xs text-onSurface hover:text-primary px-1.5 py-1 rounded hover:bg-muted cursor-pointer transition-colors max-w-[140px] truncate"
+                className="flex items-center gap-1 text-xs text-onSurface hover:text-primary px-1 sm:px-1.5 py-1 rounded hover:bg-muted cursor-pointer transition-colors max-w-[65px] xs:max-w-[100px] sm:max-w-[140px] truncate shrink-0"
               >
                 <span className="truncate font-medium">{projectName}</span>
-                <Edit2 className="w-3 h-3 text-secondary opacity-60 shrink-0" />
+                <Edit2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-secondary opacity-60 shrink-0" />
               </div>
             </Tooltip>
           )}
 
           {/* Feature 5: Multi-Page Switcher */}
-          <PageSwitcher />
+          <div className="shrink-0">
+            <PageSwitcher />
+          </div>
 
           {/* Undo / Redo */}
-          <div className="flex items-center gap-0.5 border-l border-border pl-1.5">
+          <div className="flex items-center gap-0.5 border-l border-border pl-1 sm:pl-1.5 shrink-0">
             <Tooltip title={`Undo (Ctrl+Z) - ${history.length} steps`}>
               <span>
                 <button
                   onClick={undo}
                   disabled={history.length === 0}
-                  className="p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:hover:bg-transparent text-secondary hover:text-onSurface transition-colors cursor-pointer"
+                  className="p-1 sm:p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:hover:bg-transparent text-secondary hover:text-onSurface transition-colors cursor-pointer"
                 >
-                  <Undo2 className="w-4 h-4" />
+                  <Undo2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
               </span>
             </Tooltip>
@@ -133,17 +152,17 @@ export default function TopBar({
                 <button
                   onClick={redo}
                   disabled={future.length === 0}
-                  className="p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:hover:bg-transparent text-secondary hover:text-onSurface transition-colors cursor-pointer"
+                  className="p-1 sm:p-1.5 rounded hover:bg-muted disabled:opacity-30 disabled:hover:bg-transparent text-secondary hover:text-onSurface transition-colors cursor-pointer"
                 >
-                  <Redo2 className="w-4 h-4" />
+                  <Redo2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
               </span>
             </Tooltip>
           </div>
         </div>
 
-        {/* Center: Device Switcher & Zoom */}
-        <div className="flex items-center gap-2">
+        {/* Center: Desktop Device Switcher, Zoom & Grid Tools */}
+        <div className="hidden lg:flex items-center gap-2">
           {/* Device Switcher */}
           <div className="bg-muted p-0.5 rounded-lg border border-border flex items-center">
             <button
@@ -156,7 +175,7 @@ export default function TopBar({
               title="Desktop View (1440px)"
             >
               <Monitor className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Desktop</span>
+              <span>Desktop</span>
             </button>
             <button
               onClick={() => setActiveDevice('tablet')}
@@ -168,7 +187,7 @@ export default function TopBar({
               title="Tablet View (768px)"
             >
               <Tablet className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Tablet</span>
+              <span>Tablet</span>
             </button>
             <button
               onClick={() => setActiveDevice('mobile')}
@@ -180,7 +199,7 @@ export default function TopBar({
               title="Mobile View (375px)"
             >
               <Smartphone className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Mobile</span>
+              <span>Mobile</span>
             </button>
           </div>
 
@@ -279,126 +298,179 @@ export default function TopBar({
           </div>
         </div>
 
-        {/* Right: Clean, Spacious & Uncluttered Action Bar */}
-        <div className="flex items-center gap-2">
-          {/* Studio Tools Hub (Drawer Trigger) */}
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => setIsDrawerOpen(true)}
-            startIcon={<Menu className="w-3.5 h-3.5 text-purple-600" />}
-            sx={{
-              borderColor: 'divider',
-              color: 'text.primary',
-              textTransform: 'none',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              borderRadius: 2,
-              bgcolor: 'background.paper',
-              '&:hover': {
-                borderColor: 'purple.main',
-                bgcolor: 'purple.lighter'
-              }
-            }}
-            title="Open Studio Tools Menu (AI Copilot, Stitch Vibes, Blocks, Critique, Assets, JSON)"
+        {/* Center Compact: Mobile/Tablet Device Toggle (hidden on desktop & small xs) */}
+        <div className="hidden sm:flex lg:hidden items-center bg-muted p-0.5 rounded-lg border border-border shrink-0">
+          <button
+            onClick={() => setActiveDevice('desktop')}
+            className={`p-1.5 rounded transition-colors cursor-pointer ${
+              activeDevice === 'desktop' ? 'bg-primary text-white shadow-xs' : 'text-secondary hover:text-onSurface'
+            }`}
+            title="Desktop View (1440px)"
           >
-            <span>Studio Tools</span>
-            <Chip
-              label="Menu"
-              size="small"
-              sx={{
-                ml: 1,
-                height: 18,
-                fontSize: '0.625rem',
-                bgcolor: '#F3E8FF',
-                color: '#7E22CE',
-                fontWeight: 700
-              }}
-            />
-          </Button>
+            <Monitor className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => setActiveDevice('tablet')}
+            className={`p-1.5 rounded transition-colors cursor-pointer ${
+              activeDevice === 'tablet' ? 'bg-primary text-white shadow-xs' : 'text-secondary hover:text-onSurface'
+            }`}
+            title="Tablet View (768px)"
+          >
+            <Tablet className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => setActiveDevice('mobile')}
+            className={`p-1.5 rounded transition-colors cursor-pointer ${
+              activeDevice === 'mobile' ? 'bg-primary text-white shadow-xs' : 'text-secondary hover:text-onSurface'
+            }`}
+            title="Mobile View (375px)"
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+          </button>
+        </div>
 
-          {/* AI Prompt Studio (Fast 1-Click Launch) */}
-          {/* <Button
-            variant="contained"
-            size="small"
-            onClick={() => onOpenAiPrompt && onOpenAiPrompt('prompt')}
-            startIcon={<Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />}
-            sx={{
-              background: 'linear-gradient(135deg, #7C3AED, #4F46E5, #9333EA)',
-              color: '#FFFFFF',
-              fontWeight: 600,
-              fontSize: '0.75rem',
-              textTransform: 'none',
-              borderRadius: 2,
-              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.28)',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #6D28D9, #4338CA, #7E22CE)',
-                transform: 'scale(1.02)'
-              }
-            }}
-            title="AI Prompt Studio (Ctrl+K)"
-          >
-            <span>AI Prompt</span>
-            <Chip
-              label="⌘K"
+        {/* Right: Actions (Studio Tools, Preview, Export) - Fully Responsive */}
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          {/* Studio Tools Hub Button - Desktop view */}
+          <div className="hidden sm:block">
+            <Button
+              variant="outlined"
               size="small"
+              onClick={handleOpenDrawer}
+              startIcon={<Menu className="w-3.5 h-3.5 text-purple-600" />}
               sx={{
-                ml: 1,
-                height: 18,
-                fontSize: '0.625rem',
-                bgcolor: 'rgba(255,255,255,0.2)',
+                borderColor: 'divider',
+                color: 'text.primary',
+                textTransform: 'none',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                borderRadius: 2,
+                bgcolor: 'background.paper',
+                '&:hover': {
+                  borderColor: 'purple.main',
+                  bgcolor: 'purple.lighter'
+                }
+              }}
+              title="Open Studio Tools Menu (AI Copilot, Stitch Vibes, Blocks, Critique, Assets, JSON)"
+            >
+              <span>Studio Tools</span>
+              <Chip
+                label="Menu"
+                size="small"
+                sx={{
+                  ml: 1,
+                  height: 18,
+                  fontSize: '0.625rem',
+                  bgcolor: '#F3E8FF',
+                  color: '#7E22CE',
+                  fontWeight: 700
+                }}
+              />
+            </Button>
+          </div>
+
+          {/* Studio Tools Hub Button - Mobile Icon View */}
+          <div className="sm:hidden">
+            <Tooltip title="Studio Tools Menu">
+              <IconButton
+                size="small"
+                onClick={handleOpenDrawer}
+                sx={{
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  bgcolor: 'background.paper',
+                  p: 0.8,
+                  borderRadius: 2
+                }}
+              >
+                <Menu className="w-4 h-4 text-purple-600" />
+              </IconButton>
+            </Tooltip>
+          </div>
+
+          <div className="h-5 w-px bg-border mx-0.5 hidden xs:block" />
+
+          {/* Live Preview Button - Desktop */}
+          <div className="hidden sm:block">
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={onOpenPreview}
+              startIcon={<Eye className="w-3.5 h-3.5 text-emerald-600" />}
+              sx={{
+                borderColor: 'divider',
+                color: 'text.primary',
+                textTransform: 'none',
+                fontSize: '0.75rem',
+                borderRadius: 2,
+                bgcolor: 'background.paper',
+                fontWeight: 500
+              }}
+            >
+              Preview
+            </Button>
+          </div>
+
+          {/* Live Preview Button - Mobile */}
+          <div className="sm:hidden">
+            <Tooltip title="Preview Site">
+              <IconButton
+                size="small"
+                onClick={onOpenPreview}
+                sx={{
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  bgcolor: 'background.paper',
+                  p: 0.8,
+                  borderRadius: 2,
+                  color: 'emerald.main'
+                }}
+              >
+                <Eye className="w-4 h-4 text-emerald-600" />
+              </IconButton>
+            </Tooltip>
+          </div>
+
+          {/* Production Export Button - Desktop */}
+          <div className="hidden sm:block">
+            <Button
+              variant="contained"
+              size="small"
+              onClick={onOpenExport}
+              startIcon={<Download className="w-3.5 h-3.5" />}
+              sx={{
+                background: 'linear-gradient(135deg, #2563EB, #1D4ED8)',
                 color: '#FFFFFF',
-                display: { xs: 'none', sm: 'inline-flex' }
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                textTransform: 'none',
+                borderRadius: 2,
+                boxShadow: '0 4px 12px rgba(37,99,235,0.25)'
               }}
-            />
-          </Button> */}
+            >
+              Export
+            </Button>
+          </div>
 
-          <div className="h-5 w-px bg-border mx-0.5" />
-
-          {/* Live Preview Button */}
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={onOpenPreview}
-            startIcon={<Eye className="w-3.5 h-3.5 text-emerald-600" />}
-            sx={{
-              borderColor: 'divider',
-              color: 'text.primary',
-              textTransform: 'none',
-              fontSize: '0.75rem',
-              borderRadius: 2,
-              bgcolor: 'background.paper',
-              fontWeight: 500
-            }}
-          >
-            Preview
-          </Button>
-
-          {/* Production Export Button */}
-          <Button
-            variant="contained"
-            size="small"
-            onClick={onOpenExport}
-            startIcon={<Download className="w-3.5 h-3.5" />}
-            sx={{
-              background: 'linear-gradient(135deg, #2563EB, #1D4ED8)',
-              color: '#FFFFFF',
-              fontWeight: 600,
-              fontSize: '0.75rem',
-              textTransform: 'none',
-              borderRadius: 2,
-              boxShadow: '0 4px 12px rgba(37,99,235,0.25)'
-            }}
-          >
-            Export
-          </Button>
+          {/* Production Export Button - Mobile */}
+          <div className="sm:hidden">
+            <Tooltip title="Export Code (React & HTML)">
+              <button
+                type="button"
+                onClick={onOpenExport}
+                className="p-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs flex items-center justify-center cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+              </button>
+            </Tooltip>
+          </div>
         </div>
       </header>
 
       {/* Slide-over Studio Menu Drawer */}
       <StudioMenuDrawer
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={handleCloseDrawer}
         onOpenAiPrompt={onOpenAiPrompt}
         onOpenVibes={onOpenVibes || (() => {})}
         onOpenCritique={onOpenCritique || (() => {})}

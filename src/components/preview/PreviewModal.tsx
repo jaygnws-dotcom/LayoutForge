@@ -103,8 +103,8 @@ export default function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col select-none animate-in fade-in duration-150">
       {/* Top Preview Navigation Bar (hidden in immersive true-tab mode) */}
       {!isImmersive && (
-        <div className="h-14 border-b border-border bg-surface px-4 flex items-center justify-between shadow-sm shrink-0 z-10">
-          <div className="flex items-center gap-3">
+        <div className="min-h-14 py-1.5 border-b border-border bg-surface px-2 sm:px-4 flex flex-wrap items-center justify-between gap-2 shadow-sm shrink-0 z-10 overflow-x-auto">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary', display: { xs: 'none', md: 'block' } }}>
               Live Preview
             </Typography>
@@ -119,7 +119,7 @@ export default function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
                       setPreviewPageId(page.id);
                       setKey(k => k + 1);
                     }}
-                    className={`px-2.5 py-1 rounded text-xs transition-colors cursor-pointer ${
+                    className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded text-xs transition-colors cursor-pointer ${
                       previewPageId === page.id
                         ? 'bg-surface text-primary font-bold shadow-2xs'
                         : 'text-secondary hover:text-onSurface'
@@ -138,7 +138,7 @@ export default function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
             </div>
 
             <Chip
-              label={isFullscreen ? '100% Full Width' : `${typeof frameWidth === 'number' ? Math.round(frameWidth) : frameWidth}px`}
+              label={isFullscreen ? '100%' : `${typeof frameWidth === 'number' ? Math.round(frameWidth) : frameWidth}px`}
               size="small"
               sx={{
                 fontFamily: 'monospace',
@@ -152,13 +152,13 @@ export default function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
           </div>
 
           {/* Device & Full Screen Toggles */}
-          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg border border-border">
+          <div className="flex items-center gap-1 bg-muted p-0.5 sm:p-1 rounded-lg border border-border">
             <button
               onClick={() => {
                 setDeviceMode('fullscreen');
                 setFrameWidth('100%');
               }}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded text-xs transition-colors cursor-pointer ${
                 deviceMode === 'fullscreen'
                   ? 'bg-primary text-white font-medium shadow-xs'
                   : 'text-secondary hover:text-onSurface'
@@ -166,12 +166,12 @@ export default function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
               title="Full Screen Edge-to-Edge (100% Width & Height)"
             >
               <Maximize2 className="w-3.5 h-3.5" />
-              <span className="font-semibold">Full Screen (100%)</span>
+              <span className="font-semibold hidden sm:inline">Full Screen</span>
             </button>
 
             <button
               onClick={() => setDeviceMode('desktop')}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded text-xs transition-colors cursor-pointer ${
                 deviceMode === 'desktop'
                   ? 'bg-primary text-white font-medium shadow-xs'
                   : 'text-secondary hover:text-onSurface'
@@ -184,7 +184,7 @@ export default function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
 
             <button
               onClick={() => setDeviceMode('tablet')}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded text-xs transition-colors cursor-pointer ${
                 deviceMode === 'tablet'
                   ? 'bg-primary text-white font-medium shadow-xs'
                   : 'text-secondary hover:text-onSurface'
@@ -197,7 +197,7 @@ export default function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
 
             <button
               onClick={() => setDeviceMode('mobile')}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded text-xs transition-colors cursor-pointer ${
                 deviceMode === 'mobile'
                   ? 'bg-primary text-white font-medium shadow-xs'
                   : 'text-secondary hover:text-onSurface'

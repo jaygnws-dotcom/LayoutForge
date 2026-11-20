@@ -338,19 +338,19 @@ export default function AiPromptModal({ isOpen, onClose, initialTab = 'prompt' }
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-gradient-to-r from-muted via-surface to-muted shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-indigo-500/25 text-white">
-              <Sparkles className="w-5 h-5 text-yellow-300" />
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border flex items-center justify-between bg-gradient-to-r from-muted via-surface to-muted shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-indigo-500/25 text-white shrink-0">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-sm text-onSurface tracking-tight">AI Architecture & Design Studio</h3>
+                <h3 className="font-bold text-sm text-onSurface tracking-tight">AI Studio</h3>
                 <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200">
-                  LayoutForge Vision & Neural v2.5
+                  Neural v2.5
                 </span>
               </div>
-              <p className="text-xs text-secondary mt-0.5">
+              <p className="hidden sm:block text-xs text-secondary mt-0.5">
                 Generate responsive visual layouts from text prompts or synthesize designs directly from uploaded screenshots.
               </p>
             </div>
@@ -365,7 +365,7 @@ export default function AiPromptModal({ isOpen, onClose, initialTab = 'prompt' }
             <button
               onClick={onClose}
               disabled={isGenerating}
-              className="p-1.5 rounded-lg text-secondary hover:text-onSurface hover:bg-muted transition-colors disabled:opacity-50"
+              className="p-1.5 rounded-lg text-secondary hover:text-onSurface hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -373,7 +373,7 @@ export default function AiPromptModal({ isOpen, onClose, initialTab = 'prompt' }
         </div>
 
         {/* Tab Navigation: Text Prompt vs Image-to-Design */}
-        <div className="px-6 pt-3 pb-0 border-b border-border bg-surface shrink-0 flex items-center justify-between">
+        <div className="px-3 sm:px-6 pt-2 sm:pt-3 pb-0 border-b border-border bg-surface shrink-0 flex items-center justify-between overflow-x-auto scrollbar-none">
           <div className="flex items-center gap-2">
             <button
               type="button"
